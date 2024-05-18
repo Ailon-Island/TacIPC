@@ -1,0 +1,15 @@
+[submodule "extern/zpc"]
+	path = extern/zpc
+	url = https://github.com/zenustech/zpc.git
+[submodule "extern/libigl"]
+	path = extern/libigl
+	url = https://github.com/libigl/libigl.git
+[submodule "extern/eigen"]
+	path = extern/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "extern/gtest"]
+	path = extern/gtest
+	url = https://github.com/google/googletest
+[submodule "extern/json"]
+	path = extern/json
+	url = https://github.com/nlohmann/json.git

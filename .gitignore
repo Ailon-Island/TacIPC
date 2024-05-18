@@ -1,0 +1,60 @@
+# vscode 
+.vscode/
+
+# jetbrains
+.idea/
+
+# docs (ignore for now)
+docs/
+
+# build dir 
+build/
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+# *.obj # for mesh resources
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Python debug files
+*.py
+
+# Log files
+*.log
+log
+*.*log*
+
+# Output files
+output/
+
+# Demo files
+demo/
+
+# Python cache files
+__pycache__/
