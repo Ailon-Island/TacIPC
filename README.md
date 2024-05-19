@@ -77,7 +77,7 @@ cmake --build build --parallel [N_threads] # build
     ```
     Or generally, run customized experiments following
     ```sh
-    stdbuf -oO ./build/main \
+    stdbuf -o0 ./build/main \
         [expName] \
         [enableGui] \
         [enableCGSolver] \
