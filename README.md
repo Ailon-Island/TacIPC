@@ -1,4 +1,10 @@
 # TacIPC: Intersection- and Inversion-Free FEM-Based Elastomer Simulation for Optical Tactile Sensors
+<p align="center">
+  <a href='https://ieeexplore.ieee.org/abstract/document/10410895/'>
+    <img src='https://img.shields.io/badge/Paper-PDF-blue?style=flat&logo=Googlescholar&logoColor=blue' alt='Paper PDF'>
+  </a>
+</p>
+
 ## Requirements
 - CMake >= 3.20
 - gcc/g++ >= 10
@@ -121,3 +127,13 @@ cmake --build build --parallel [N_threads] # build
         -   Modify solver settings
         -   Modify `move` lambda to implement your own task (usually changing the target state a bit each step)
 
+## Cite this work
+```bibtex
+@article{tacipc2024,
+  title={TacIPC: Intersection-and Inversion-free FEM-based Elastomer Simulation For Optical Tactile Sensors},
+  author={Du, Wenxin and Xu, Wenqiang and Ren, Jieji and Yu, Zhenjun and Lu, Cewu},
+  journal={IEEE Robotics and Automation Letters},
+  year={2024},
+  publisher={IEEE}
+}
+```
