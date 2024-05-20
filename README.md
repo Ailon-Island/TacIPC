@@ -75,7 +75,12 @@ cmake --build build --parallel [N_threads] # build
         0.01 \
         > output/logs/press_example.log
     ```
-    Or generally, run customized experiments following
+2. Postprocess and obtain marker displacements (same as above)
+
+## Run custom experiments
+-   Run experiment with custom configurations
+    
+    Modify `scripts/config.py` and `run_experiments.py`, or just run command following
     ```sh
     stdbuf -o0 ./build/main \
         [expName] \
@@ -97,4 +102,22 @@ cmake --build build --parallel [N_threads] # build
         [dt] \
         > [logPth]
     ```
-2. Postprocess and obtain marker displacements (same as above)
+
+-   Postprocess custom tactile sensor gel
+    1.  Prepare your tactile sensor gel mesh and boundary condition file.
+        -   The gel mesh should be tetrahedral and in `.msh` format. The length should be in milimeters.
+        -   The boundary condition file should be in `.json` format. It is a list of binary numbers, where `1` indicates the corresponding node is fixed, and `0` indicates the node is free to move.
+    2.  Take `gel_0.obj` after experiment as surface mesh(recommanded), or extract it mannually.
+    3.  Generate the triangular barycentric weights on the surface mesh for markers, and save as `marker_bc_ws.pkl` in the same directory as your `.msh` gel mesh. You may refer to `process/gen_markers.py`.
+    4.  Postprocess as usual.
+
+-   Custom tasks
+
+    Refer to `main.py` to implement your own tasks.
+    -   Program entrance
+        -   Modify arguments in `main()`
+    -   Task implementation (in `prepare()`)
+        -   Modify configuration to be dumped in `config`
+        -   Modify solver settings
+        -   Modify `move` lambda to implement your own task (usually changing the target state a bit each step)
+
