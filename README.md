@@ -128,6 +128,7 @@ cmake --build build --parallel [N_threads] # build
         -   Modify `move` lambda to implement your own task (usually changing the target state a bit each step)
 
 ## Cite this work
+If you use TacIPC in your work, please cite us.
 ```bibtex
 @article{tacipc2024,
   title={TacIPC: Intersection-and Inversion-free FEM-based Elastomer Simulation For Optical Tactile Sensors},
