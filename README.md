@@ -119,7 +119,7 @@ cmake --build build --parallel [N_threads] # build
 
 -   Custom tasks
 
-    Refer to `main.py` to implement your own tasks.
+    Refer to `main.cu` to implement your own tasks.
     -   Program entrance
         -   Modify arguments in `main()`
     -   Task implementation (in `prepare()`)
