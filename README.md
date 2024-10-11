@@ -14,6 +14,7 @@
 - xcursor
 - xi
 - OpenGL
+- zlib
 ```sh
 # install with apt
 sudo apt install libsuitesparse-dev
@@ -22,6 +23,7 @@ sudo apt install libxinerama-dev
 sudo apt install libxcursor-dev
 sudo apt install libxi-dev
 sudo apt install libgl1-mesa-dev
+sudo apt install zlib1g-dev
 ```
 
 ## Configure && Build
