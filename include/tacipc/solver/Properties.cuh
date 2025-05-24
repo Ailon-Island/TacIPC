@@ -131,9 +131,12 @@ class VertexProperties : public Properties<T>
     static inline constexpr auto springW = createStaticPropertyTag<1>("spring_w", exclGrpIdx);
     static inline constexpr auto contact = createStaticPropertyTag<3>("contact", springW);
     static inline constexpr auto Pre = createStaticPropertyTag<3, 3>("Pre", contact);
+    static inline constexpr auto friction_force = createStaticPropertyTag<3>("friction_force", Pre);
+    static inline constexpr auto collision_force = createStaticPropertyTag<3>("collision_force", friction_force);
+    static inline constexpr auto elastic_force = createStaticPropertyTag<3>("elastic_force", collision_force);
 
 
-    static inline auto propertyTags = createPropertyTagsVector(Pre);
+    static inline auto propertyTags = createPropertyTagsVector(elastic_force);
 
     VertexProperties() = default;
 };
