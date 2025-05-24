@@ -586,6 +586,7 @@ void ABDSolver::SoftEnergy<T>::addElasticGradientAndHessian(ABDSolver &solver, p
                     zs::vec<int, 3> segIsKin;
                     for (int d = 0; d < 3; d++)
                         segIsKin[d] = reinterpret_bits<Ti>(vData(VProps::isBC, inds[d])); 
+                    scatterElasticForce(inds, grad, vData); 
                     scatterGradientAndHessian(segStart, segLen, segIsKin, grad, hess, dofData, rbData, vData, rbDofs, sb_vOffset, sysHess, kinematicSatisfied, true, false);
                 });
         }
@@ -648,6 +649,7 @@ void ABDSolver::SoftEnergy<T>::addElasticGradientAndHessian(ABDSolver &solver, p
                     for (int d = 0; d < 4; d++)
                         segIsKin[d] = reinterpret_bits<Ti>(vData(VProps::isBC, inds[d])); 
                     // printf("Elastic hess[%d-%d-%d-%d] norm: %f\n", (int)inds[0], (int)inds[1], (int)inds[2], (int)inds[3], (float)hess.norm());
+                    scatterElasticForce(inds, grad, vData); 
                     scatterGradientAndHessian(segStart, segLen, segIsKin, grad, hess, dofData, rbData, vData, rbDofs, sb_vOffset, sysHess, kinematicSatisfied, true, false);
                 });
         }
@@ -1580,6 +1582,7 @@ void ABDSolver::BarrierEnergy<T>::addBarrierGradientAndHessian(ABDSolver &solver
 
             auto grad = -PFPx.transpose() * flatten_pk1;
             scatterContactForce(pp, grad, vData);
+            scatterCollisionForce(pp, grad, vData);
 
             // ABD: update q grad instead of x grad
             int bodyA = reinterpret_bits<Ti>(vData(VProps::body, pp[0]));
@@ -1767,6 +1770,7 @@ void ABDSolver::BarrierEnergy<T>::addBarrierGradientAndHessian(ABDSolver &solver
 
             auto grad = -PFPx.transpose() * flatten_pk1;
             scatterContactForce(pe, grad, vData);
+            scatterCollisionForce(pe, grad, vData);
 
             // ABD: update q grad instead of x grad
             int bodyA = reinterpret_bits<Ti>(vData(VProps::body, pe[0]));
@@ -1940,6 +1944,7 @@ void ABDSolver::BarrierEnergy<T>::addBarrierGradientAndHessian(ABDSolver &solver
 
             auto grad = -PFPx.transpose() * flatten_pk1;
             scatterContactForce(pt, grad, vData);
+            scatterCollisionForce(pt, grad, vData);
 
             // printf("pt grad[%d]: %f %f %f %f %f %f %f %f %f %f %f %f\n", pti, (float)grad[0], (float)grad[1], (float)grad[2], (float)grad[3], (float)grad[4], (float)grad[5], (float)grad[6], (float)grad[7], (float)grad[8], (float)grad[9], (float)grad[10], (float)grad[11]);
             // ABD: update q grad instead of x grad
@@ -2124,6 +2129,7 @@ void ABDSolver::BarrierEnergy<T>::addBarrierGradientAndHessian(ABDSolver &solver
 
             auto grad = -PFPx.transpose() * flatten_pk1;
             scatterContactForce(ee, grad, vData);
+            scatterCollisionForce(ee, grad, vData);
 
             // ABD: update q grad instead of x grad
             int bodyA = reinterpret_bits<Ti>(vData(VProps::body, ee[0]));
@@ -2321,6 +2327,7 @@ void ABDSolver::BarrierEnergy<T>::addBarrierGradientAndHessian(ABDSolver &solver
                 for (int d = 0; d < 3; d++)
                     grad_x_vec(i * 3 + d) = grad_x(i, d); // reshape?
             scatterContactForce(eem, grad_x_vec, vData);
+            scatterCollisionForce(eem, grad_x_vec, vData);
 
             // hessian
             auto eeGrad_ = Vec12View{eeGrad.data()};
@@ -2505,6 +2512,7 @@ void ABDSolver::BarrierEnergy<T>::addBarrierGradientAndHessian(ABDSolver &solver
             for (int i = 0; i < 3; i++)
                 grad_x_vec(9 + i) = grad_x_3(i);
             scatterContactForce(ppm, grad_x_vec, vData);
+            scatterCollisionForce(ppm, grad_x_vec, vData);
 
             // hessian
             using GradT = zs::vec<T, 12>;
@@ -2705,6 +2713,7 @@ void ABDSolver::BarrierEnergy<T>::addBarrierGradientAndHessian(ABDSolver &solver
             for (int i = 0; i < 3; i++)
                 grad_x_vec(9 + i) = grad_x_3(i);
             scatterContactForce(pem, grad_x_vec, vData);
+            scatterCollisionForce(pem, grad_x_vec, vData);
 
             // hessian
             using GradT = zs::vec<T, 12>;
@@ -2936,6 +2945,7 @@ void ABDSolver::BarrierEnergy<T>::addFrictionGradientAndHessian(ABDSolver &solve
                 grad(d + 3) = grad_x1(d);
             }
             scatterContactForce(fpp, grad, vData);
+            scatterFrictionForce(fpp, grad, vData); 
 
             relDX = basis.transpose() * relDX3D;
             auto TT = point_point_TT(basis); // 2x6
@@ -3068,6 +3078,7 @@ void ABDSolver::BarrierEnergy<T>::addFrictionGradientAndHessian(ABDSolver &solve
                 for (int di = 0; di < 3; di++)
                     grad(vi * 3 + di) = TTTDX(vi, di);
             scatterContactForce(fpe, grad, vData);
+            scatterFrictionForce(fpe, grad, vData); 
 
             relDX = basis.transpose() * relDX3D;
             auto TT = point_edge_TT(basis, yita); // 2x9
@@ -3214,6 +3225,7 @@ void ABDSolver::BarrierEnergy<T>::addFrictionGradientAndHessian(ABDSolver &solve
                 for (int di = 0; di < 3; di++)
                     grad(vi * 3 + di) = TTTDX(vi, di);
             scatterContactForce(fpt, grad, vData);
+            scatterFrictionForce(fpt, grad, vData); 
 
             relDX = basis.transpose() * relDX3D;
             auto TT = point_triangle_TT(basis, betas[0], betas[1]); // 2x12
@@ -3360,6 +3372,7 @@ void ABDSolver::BarrierEnergy<T>::addFrictionGradientAndHessian(ABDSolver &solve
                 for (int di = 0; di < 3; di++)
                     grad(vi * 3 + di) = TTTDX(vi, di);
             scatterContactForce(fee, grad, vData);
+            scatterFrictionForce(fee, grad, vData); 
 
             relDX = basis.transpose() * relDX3D;
             auto TT = edge_edge_TT(basis, gammas[0], gammas[1]); // 2x12

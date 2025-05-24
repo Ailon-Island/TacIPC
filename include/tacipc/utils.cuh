@@ -803,6 +803,52 @@ constexpr __device__ void scatterContactForce(VecInt& inds, VecT& grad, VViewT& 
     }
 }
 
+template<class VecInt, class VecT, class VViewT>
+constexpr __device__ void scatterCollisionForce(VecInt& inds, VecT& grad, VViewT& vData)
+{
+    using namespace zs;
+    using vec3 = vec<typename VecT::value_type, 3>;
+    using VProps = typename VViewT::props_t;
+    constexpr auto inds_N = VecInt::template range_t<0>::value;
+    for (int i = 0; i <inds_N; i++)
+    {
+        int vi = inds[i];
+        for (int d = 0; d < 3; d++)
+            atomic_add(exec_cuda, &vData(VProps::collision_force, d, vi), grad[i * 3 + d]);
+    }
+}
+
+template<class VecInt, class VecT, class VViewT>
+constexpr __device__ void scatterFrictionForce(VecInt& inds, VecT& grad, VViewT& vData)
+{
+    using namespace zs;
+    using vec3 = vec<typename VecT::value_type, 3>;
+    using VProps = typename VViewT::props_t;
+    constexpr auto inds_N = VecInt::template range_t<0>::value;
+    for (int i = 0; i <inds_N; i++)
+    {
+        int vi = inds[i];
+        for (int d = 0; d < 3; d++)
+            atomic_add(exec_cuda, &vData(VProps::friction_force, d, vi), grad[i * 3 + d]);
+    }
+}
+
+
+template<class VecInt, class VecT, class VViewT>
+constexpr __device__ void scatterElasticForce(VecInt& inds, VecT& grad, VViewT& vData)
+{
+    using namespace zs;
+    using vec3 = vec<typename VecT::value_type, 3>;
+    using VProps = typename VViewT::props_t;
+    constexpr auto inds_N = VecInt::template range_t<0>::value;
+    for (int i = 0; i <inds_N; i++)
+    {
+        int vi = inds[i];
+        for (int d = 0; d < 3; d++)
+            atomic_add(exec_cuda, &vData(VProps::elastic_force, d, vi), grad[i * 3 + d]);
+    }
+}
+
 /// gradient and hessian utils
 template<class VecInt, class VecT, class VecMatT, class DOFViewT, class RBViewT, class VViewT, class SysHess>
 constexpr __device__ void scatterGradientAndHessian(VecInt& segStart, VecInt& segLen, VecInt& segIsKin, 

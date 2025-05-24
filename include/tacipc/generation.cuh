@@ -452,7 +452,10 @@ std::shared_ptr<TriBodyT> genTriBodyFromTriMesh(std::string name, const meshio::
                                       {"x", 3}, // position
                                       {"x0", 3}, // initial position
                                       {"v", 3},
-                                      {"contact", 3}}; // to be set by other APIs // velocity
+                                      {"contact", 3}, 
+                                      {"collision_force", 3},
+                                      {"friction_force", 3},
+                                      {"elastic_force", 3}}; // to be set by other APIs // velocity
     std::vector<PropertyTag> triTags{{"vol", 1}, // volume
                                      {"area", 1}, // area
                                      {"IB", 4}, // the Inverse of its Basis
@@ -678,7 +681,10 @@ std::shared_ptr<TetBodyT> genTetBodyFromTetMesh(std::string name, const meshio::
                                       {"x", 3},
                                       {"x0", 3},
                                       {"v", 3},
-                                      {"contact", 3}}; // to be set by other APIs
+                                      {"contact", 3}, 
+                                      {"collision_force", 3},
+                                      {"friction_force", 3},
+                                      {"elastic_force", 3}}; // to be set by other APIs
     std::vector<PropertyTag> tetTags{{"vol", 1},
                                      {"IB", 9}, // the Inverse of its Basis
                                      {"inds", 4},

@@ -617,10 +617,16 @@ void ABDSolver::update(pol_t &pol) {
              xTag = verts.getPropertyOffset("x"),
              vTag = verts.getPropertyOffset("v"),
              contactTag = verts.getPropertyOffset("contact"),
+             friction_force_tag = verts.getPropertyOffset("friction_force"),
+             collision_force_tag = verts.getPropertyOffset("collision_force"),
+             elastic_force_tag = verts.getPropertyOffset("elastic_force"),
              dt = dt, vOffset = sbHandle.voffset()] __device__(int vi) mutable {
                 verts.tuple<3>(xTag, vi) = vData.pack(VProps::xn, vOffset + vi);
                 verts.tuple<3>(vTag, vi) = vData.pack(VProps::vn, vOffset + vi);
                 verts.tuple<3>(contactTag, vi) = vData.pack(VProps::contact, vOffset + vi) / (dt * dt);
+                verts.tuple<3>(friction_force_tag, vi) = vData.pack(VProps::friction_force, vOffset + vi) / (dt * dt);
+                verts.tuple<3>(collision_force_tag, vi) = vData.pack(VProps::collision_force, vOffset + vi) / (dt * dt);
+                verts.tuple<3>(elastic_force_tag, vi) = vData.pack(VProps::elastic_force, vOffset + vi) / (dt * dt);
             });
     }
 
@@ -641,12 +647,18 @@ void ABDSolver::update(pol_t &pol) {
              xTag = verts.getPropertyOffset("x"),
              vTag = verts.getPropertyOffset("v"),
              contactTag = verts.getPropertyOffset("contact"),
+             friction_force_tag = verts.getPropertyOffset("friction_force"),
+             collision_force_tag = verts.getPropertyOffset("collision_force"),
+             elastic_force_tag = verts.getPropertyOffset("elastic_force"),
              dt = dt, vOffset = rbHandle.voffset(), rbi = rbi,
              rbData = view<space>(rbData)] __device__(int vi) mutable {
                 verts.tuple<3>(xTag, vi) = vData.pack(VProps::xn, vOffset + vi);
                 verts.tuple<3>(vTag, vi) = ABD_q2x(vData.pack(VProps::JVec, vOffset + vi), 
                     rbData.pack(RBProps::qDot, rbi)); 
                 verts.tuple<3>(contactTag, vi) = vData.pack(VProps::contact, vOffset + vi) / (dt * dt);
+                verts.tuple<3>(friction_force_tag, vi) = vData.pack(VProps::friction_force, vOffset + vi) / (dt * dt);
+                verts.tuple<3>(collision_force_tag, vi) = vData.pack(VProps::collision_force, vOffset + vi) / (dt * dt);
+                verts.tuple<3>(elastic_force_tag, vi) = vec3::zeros(); 
             });
         auto &bodyTypeProperties = rbHandle.bodyTypeProperties();
         bodyTypeProperties.q = temp12.getVal(rbi * 3);

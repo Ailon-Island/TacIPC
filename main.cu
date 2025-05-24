@@ -108,8 +108,8 @@ auto prepare(std::string expName, bool enableCG, auto cgRel, int PNCap, bool ena
     bool enableBoundaryFriction = false;
     bool enableSoftBC = false;
     std::size_t layerCps = 64;
-    std::size_t estNumCps =     50000001;
-    std::size_t dynHessCps =     7000002;
+    std::size_t estNumCps =     20000001;
+    std::size_t dynHessCps =     3000002;
     T kinematicALCoef = 1e6;
     T pnRel = 2e-2;
     // T cgRel = 1e-3;
