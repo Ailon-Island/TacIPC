@@ -11,6 +11,7 @@
 #include <tacipc/viewer/viewer.cuh>
 
 namespace fs = std::filesystem;
+using T = tacipc::ABDSolver::T;
 
 std::string getTimestamp() {
     auto currentTimePoint = std::chrono::system_clock::now();
@@ -48,9 +49,8 @@ Eigen::Matrix3d vectorsToRotationMatrix(const Eigen::Vector3d& v1, const Eigen::
     return rotationMatrix;
 }
 
-auto prepare(std::string expName, bool enableCG, auto cgRel, int PNCap, bool enableInversionPrevention, std::string gelPth, std::string objPth, std::string isBCPth, auto fricMu, std::string moveType, int pressSteps = 6, auto pressDepth = 1., auto pressVel = 25, int taskSteps = 0, auto moveVel = 1., auto dt = 0.01)
+auto prepare(std::string expName, bool enableCG, T cgRel, int PNCap, bool enableInversionPrevention, std::string gelPth, std::string objPth, std::string isBCPth, T fricMu, std::string moveType, int pressSteps = 6, T pressDepth = 1., T pressVel = 25, int taskSteps = 0, T moveVel = 1., T dt = 0.01)
 {
-    using T = tacipc::ABDSolver::T;
     using vec3 = tacipc::ABDSolver::vec3;
     using mat4 = tacipc::ABDSolver::mat4;
 
@@ -259,9 +259,9 @@ auto prepare(std::string expName, bool enableCG, auto cgRel, int PNCap, bool ena
     return zs::make_tuple(solver, obj, gel, move, save_scene);
 }
 
-void task(auto solver, auto obj, auto gel, auto move, auto save_scene)
+template <typename SolverPtrT, typename ObjPtrT, typename GelPtrT, typename MoveFuncT, typename SaveSceneFuncT>
+void task(SolverPtrT solver, ObjPtrT obj, GelPtrT gel, MoveFuncT move, SaveSceneFuncT save_scene)
 {
-    using T = tacipc::ABDSolver::T;
     using vec3 = tacipc::ABDSolver::vec3;
     using mat4 = tacipc::ABDSolver::mat4;
 
@@ -304,9 +304,9 @@ void task(auto solver, auto obj, auto gel, auto move, auto save_scene)
     viewer.launch();
 }
 
-void task_no_gui(auto solver, auto obj, auto gel, auto move, auto save_scene)
+template <typename SolverPtrT, typename ObjPtrT, typename GelPtrT, typename MoveFuncT, typename SaveSceneFuncT>
+void task_no_gui(SolverPtrT solver, ObjPtrT obj, GelPtrT gel, MoveFuncT move, SaveSceneFuncT save_scene)
 {
-    using T = tacipc::ABDSolver::T;
     using vec3 = tacipc::ABDSolver::vec3;
     using mat4 = tacipc::ABDSolver::mat4;
 
@@ -340,8 +340,6 @@ void task_no_gui(auto solver, auto obj, auto gel, auto move, auto save_scene)
 
 int main(int argc, char **argv)
 {
-    using T = tacipc::ABDSolver::T;
-
     if (argc < 18)
     {
         fmt::print("Usage: {} <expName> <enableGui> <enableCGSolver> <cgRel> <PNCap> <enableInversionPrevention> <gelPth> <objPth> <isBCPth> <fricMu> <moveType> <pressSteps> <pressDepth> <pressVel> <taskSteps> <moveVel> <dt>\n", argv[0]);
